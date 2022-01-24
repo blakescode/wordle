@@ -17,6 +17,7 @@ import {
 
 function App() {
   const [currentGuess, setCurrentGuess] = useState('')
+  const [wordLength, setWordLength] = useState(5)
   const [isGameWon, setIsGameWon] = useState(false)
   const [isWinModalOpen, setIsWinModalOpen] = useState(false)
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
@@ -41,6 +42,8 @@ function App() {
 
   useEffect(() => {
     saveGameStateToLocalStorage({ guesses, solution })
+    setWordLength(solution.length)
+    console.log('solution:', solution)
   }, [guesses])
 
   useEffect(() => {
@@ -50,7 +53,7 @@ function App() {
   }, [isGameWon])
 
   const onChar = (value: string) => {
-    if (currentGuess.length < 5 && guesses.length < 6) {
+    if (currentGuess.length < wordLength && guesses.length < 6) {
       setCurrentGuess(`${currentGuess}${value}`)
     }
   }
@@ -60,7 +63,7 @@ function App() {
   }
 
   const onEnter = () => {
-    if (!(currentGuess.length === 5)) {
+    if (!(currentGuess.length === wordLength)) {
       setIsNotEnoughLetters(true)
       return setTimeout(() => {
         setIsNotEnoughLetters(false)
@@ -76,7 +79,7 @@ function App() {
 
     const winningWord = isWinningWord(currentGuess)
 
-    if (currentGuess.length === 5 && guesses.length < 6 && !isGameWon) {
+    if (currentGuess.length === wordLength && guesses.length < 6 && !isGameWon) {
       setGuesses([...guesses, currentGuess])
       setCurrentGuess('')
 
@@ -119,7 +122,7 @@ function App() {
           onClick={() => setIsStatsModalOpen(true)}
         />
       </div>
-      <Grid guesses={guesses} currentGuess={currentGuess} />
+      <Grid guesses={guesses} currentGuess={currentGuess} wordLength={wordLength} />
       <Keyboard
         onChar={onChar}
         onDelete={onDelete}
